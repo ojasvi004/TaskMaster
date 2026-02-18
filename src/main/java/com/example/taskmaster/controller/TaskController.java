@@ -14,15 +14,30 @@ public class TaskController {
     @Autowired
     private TaskRepository taskRepository;
 
-    // 1. Create a Task (POST request)
     @PostMapping
     public Task createTask(@RequestBody Task task) {
         return taskRepository.save(task);
     }
 
-    // 2. Get all Tasks (GET request)
     @GetMapping
     public List<Task> getAllTasks() {
         return taskRepository.findAll();
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteTask(@PathVariable Long id) {
+        taskRepository.deleteById(id);
+    }
+
+
+    @PutMapping("/{id}")
+    public Task updateTask(@PathVariable Long id, @RequestBody Task taskDetails){
+        Task task = taskRepository.findById(id).orElse(null);
+        if (task != null) {
+            task.setDescription(taskDetails.getDescription());
+            task.setCompleted(taskDetails.isCompleted());
+            return taskRepository.save(task);
+        }
+        return null;
     }
 }
